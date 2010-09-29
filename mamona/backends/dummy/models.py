@@ -18,7 +18,7 @@ class DummyTxnFactory(models.Model, AbstractMixin):
 DummyTxn = None
 
 def build_models(payment_class):
+	global DummyTxn
 	class DummyTxn(DummyTxnFactory.construct(payment_class)):
 		pass
-	global DummyTxn
 	return [DummyTxn]

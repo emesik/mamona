@@ -57,15 +57,13 @@ class PaymentFactory(models.Model, AbstractMixin):
 				self.order
 				)
 
-Payment = None
-
 from django.db.models.loading import cache as app_cache
 from utils import import_backend_modules
 def build_payment_model(order_class, **kwargs):
+	global Payment
 	class Payment(PaymentFactory.construct(order=order_class, **kwargs)):
 		pass
 	# XXX: put Payment at the top of our module to allow import in backends
-	global Payment
 	bknd_models_modules = import_backend_modules('models')
 	for bknd_name, models in bknd_models_modules.items():
 		app_cache.register_models(bknd_name, *models.build_models(Payment))
