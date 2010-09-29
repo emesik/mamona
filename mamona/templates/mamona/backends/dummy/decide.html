@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<p>
+You are about to process the following payment via Mamona's dummy module:
+</p>
+<p><strong>{{ payment }}</strong></p>
+<p>
+Would you like to finish this payment with success or failure?
+</p>
+<p>
+<a href="{% url mamona-dummy-on-success payment.id %}">Success</a>
+<a href="{% url mamona-dummy-on-failure payment.id %}">Failure</a>
+</p>
+{% endblock %}
