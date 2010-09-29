@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 from mamona.models import build_payment_model
 
 from decimal import Decimal
@@ -22,9 +23,11 @@ class Order(models.Model):
 	def on_payment_success(self):
 		self.status = 's'
 		self.save()
+		return reverse('cashier-show-order', kwargs={'order_id': self.id})
 
 	def on_payment_failure(self):
 		self.status = 'f'
 		self.save()
+		return reverse('cashier-show-order', kwargs={'order_id': self.id})
 
 Payment = build_payment_model(Order, unique=False, related_name='payments')

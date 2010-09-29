@@ -27,12 +27,6 @@ class SimpleTest(TestCase):
 
 	def test_dummy_backend(self):
 		p1 = self.o1.checkout()
-		# GET should fail with 503
-		response = self.client.get(
-				reverse('mamona-process-payment', kwargs={'payment_id': p1.id}),
-				follow=True
-				)
-		self.assertEqual(response.status_code, 405)
 		# request without backend should fail with 404
 		response = self.client.post(
 				reverse('mamona-process-payment', kwargs={'payment_id': p1.id}),
@@ -68,6 +62,8 @@ class SimpleTest(TestCase):
 				follow=True
 				)
 		self.assertEqual(response.status_code, 404)
+		# dummy backend should have created it's own model instance
+		self.assertEqual(p1.dummytxn.payment_id, p1.id)
 
 		p2 = self.o2.checkout()
 		# this should fail with 404

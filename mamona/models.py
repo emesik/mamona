@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from datetime import datetime
 from abstract_mixin import AbstractMixin
 
 PAYMENT_STATUS_CHOICES = (
@@ -24,6 +25,7 @@ class PaymentFactory(models.Model, AbstractMixin):
 	def on_success(self):
 		"Launched by backend when payment is successfully finished."
 		self.status = 'paid'
+		self.paid_on = datetime.now()
 		self.save()
 		return self.order.on_payment_success()
 
@@ -53,10 +55,6 @@ def build_payment_model(order_class, **kwargs):
 		pass
 	# XXX: put Payment at the top of our module to allow import in backends
 	global Payment
-	try:
-		backends = settings.MAMONA_BACKENDS
-	except AttributeError:
-		backends = []
 	bknd_models_modules = import_backend_modules('models')
 	for bknd_name, models in bknd_models_modules.items():
 		app_cache.register_models(bknd_name, *models.build_models(Payment))
