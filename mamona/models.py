@@ -57,6 +57,8 @@ class PaymentFactory(models.Model, AbstractMixin):
 				self.order
 				)
 
+Payment = None
+
 from django.db.models.loading import cache as app_cache
 from utils import import_backend_modules
 def build_payment_model(order_class, **kwargs):

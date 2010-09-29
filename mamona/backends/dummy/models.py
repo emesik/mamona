@@ -15,6 +15,8 @@ class DummyTxnFactory(models.Model, AbstractMixin):
 	def contribute(cls, payment):
 		return {'payment': models.OneToOneField(payment)}
 
+DummyTxn = None
+
 def build_models(payment_class):
 	class DummyTxn(DummyTxnFactory.construct(payment_class)):
 		pass
