@@ -75,12 +75,22 @@ INSTALLED_APPS = (
 #	'django.contrib.auth',
 	'django.contrib.contenttypes',
 	'django.contrib.sessions',
-#	'django.contrib.sites',
+	'django.contrib.sites',
 	'mamona',
 	'mamona.backends.dummy',
 	'cashier',
 )
 
-MAMONA_BACKENDS = (
+MAMONA_ACTIVE_BACKENDS = (
 	'dummy',
+	'paypal',
 )
+MAMONA_BACKENDS_SETTINGS = {
+	'paypal': {
+#		'url': 'https://www.paypal.com/cgi-bin/webscr',			# real payments URL
+		'url': 'https://www.sandbox.paypal.com/cgi-bin/webscr',	# test payments URL
+#		'return_url': 'http://www.example.com/success/',		# global override
+		'email': 'michal_1285791871_biz@salaban.info',
+		'password': '12345678',
+	},
+}

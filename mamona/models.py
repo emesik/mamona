@@ -35,6 +35,15 @@ class PaymentFactory(models.Model, AbstractMixin):
 		self.save()
 		return self.order.on_payment_failure()
 
+	def get_items_list(self):
+		"""Retrieves item list from order object.
+		The order object must provide method of the same name,
+		which must return at least one item. Each item is expected
+		to be a dictionary, containing at least 'name' element and
+		optionally 'price' element.
+		"""
+		return self.order.get_items_list()
+
 	@classmethod
 	def contribute(cls, order, **kwargs):
 		return {'order': models.ForeignKey(order, **kwargs)}

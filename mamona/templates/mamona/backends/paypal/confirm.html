@@ -1,0 +1,17 @@
+{% extends 'mamona/base_confirm.html' %}
+{% block content %}
+{{ block.super }}
+<form method="POST" action="{{ paypal.url }}">
+	<input type="hidden" name="invoice" value="{{ payment.id }}" />
+{# TODO: Get full list of items here, perhaps via template filter. #}
+	<input type="hidden" name="item_name" value="{{ payment.get_items_list.0.name }}" />
+	<input type="hidden" name="amount" value="{{ payment.amount }}" />
+	<input type="hidden" name="currency_code" value="{{ payment.currency }}" />
+	<input type="hidden" name="return_address" value="{{ return_address }}" />
+	<input type="hidden" name="notify_url" value="{{ notify_url }}" />
+	<input type="hidden" name="business" value="{{ paypal.email }}" />
+	<input type="hidden" name="cmd" value="_xclick" />
+	<input type="hidden" name="charset" value="utf-8" />
+	<input type="submit" value="Pay now" />
+</form>
+{% endblock %}

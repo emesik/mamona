@@ -17,6 +17,10 @@ class Order(models.Model):
 	def __unicode__(self):
 		return self.name
 
+	def get_items_list(self):
+		"""An example of the minimal implementation."""
+		return [{'name': self.name}]
+
 	def checkout(self):
 		return self.payments.create(amount=self.total, currency='EUR')
 

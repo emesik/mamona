@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+	<p>
+	{% if payment.status == 'paid' %}
+		Your payment has been successful!
+	{% endif %}
+	{% if payment.status == 'failed' %}
+		Your payment has failed!
+	{% endif %}
+	{% if payment.status == 'in_progress' %}
+		Your payment was passed to the gateway, but we have not received the response yet.
+		Please be patient. The status of your payment should be updated soon.
+	{% endif %}
+	</p>
+{% endblock %}
