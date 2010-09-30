@@ -60,5 +60,13 @@ implement listeners for two signals:
     * ``order_items_query``, where you fill a list of order items (or just return single
       item for simple orders).
 
+Finally, build a *Payment* model connected together with your *order* model:
+
+::
+
+    from mamona.models import build_payment_model
+
+    Payment = build_payment_model(MyOrderModel, unique=True, related_name='payments')
+
 To check an example implementation, see ``test-project/cashier`` application. And also
 refer to the source code of Mamona itself.
