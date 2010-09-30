@@ -7,7 +7,7 @@
 	<input type="hidden" name="item_name" value="{{ payment.get_items_list.0.name }}" />
 	<input type="hidden" name="amount" value="{{ payment.amount }}" />
 	<input type="hidden" name="currency_code" value="{{ payment.currency }}" />
-	<input type="hidden" name="return_address" value="{{ return_address }}" />
+	<input type="hidden" name="return" value="{{ return_url }}" />
 	<input type="hidden" name="notify_url" value="{{ notify_url }}" />
 	<input type="hidden" name="business" value="{{ paypal.email }}" />
 	<input type="hidden" name="cmd" value="_xclick" />
