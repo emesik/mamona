@@ -3,6 +3,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from datetime import datetime
 from abstract_mixin import AbstractMixin
+from exceptions import *
 
 PAYMENT_STATUS_CHOICES = (
 		('new', _("New")),
@@ -35,14 +36,20 @@ class PaymentFactory(models.Model, AbstractMixin):
 		self.save()
 		return self.order.on_payment_failure()
 
-	def get_items_list(self):
+	def get_items(self):
 		"""Retrieves item list from order object.
-		The order object must provide method of the same name,
+		The order model must provide method of the same name,
 		which must return at least one item. Each item is expected
 		to be a dictionary, containing at least 'name' element and
 		optionally 'price' element.
 		"""
-		return self.order.get_items_list()
+		# TODO: some sanitization here
+		return self.order.get_items()
+
+	def get_customer_data(self):
+		"""Retrieves customer data from order object.
+		"""
+		return self.order.get_customer_data()
 
 	@classmethod
 	def contribute(cls, order, **kwargs):

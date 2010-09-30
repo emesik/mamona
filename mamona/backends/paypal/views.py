@@ -24,11 +24,14 @@ def confirm(request, payment_id):
 			Site.objects.get_current().domain,
 			reverse('mamona-paypal-ipn')
 			)
+	items = payment.get_items()
+	customer = payment.get_customer_data()
 	return direct_to_template(
 			request,
 			'mamona/backends/paypal/confirm.html',
 			{
-				'payment': payment, 'paypal': paypal,
+				'payment': payment, 'items': items, 'customer': customer,
+				'paypal': paypal,
 				'return_url': return_url, 'notify_url': notify_url
 				}
 			)

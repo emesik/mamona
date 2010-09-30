@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.core.urlresolvers import reverse
 from mamona.models import build_payment_model
@@ -17,9 +18,21 @@ class Order(models.Model):
 	def __unicode__(self):
 		return self.name
 
-	def get_items_list(self):
+	def get_items(self):
 		"""An example of the minimal implementation."""
 		return [{'name': self.name}]
+
+	def get_customer_data(self):
+		"""An example of the implementation.
+		The minimal option is just an empty dictionary.
+		"""
+		return {
+			'first_name': u"Grzegorz",
+			'last_name': u"Brzęczyszczykiewicz",
+			'city': u"Łękołowy",
+			'country_name': u"Poland",
+			'country_iso': 'pl',
+			}
 
 	def checkout(self):
 		return self.payments.create(amount=self.total, currency='EUR')
