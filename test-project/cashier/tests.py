@@ -1,11 +1,14 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
+from django.contrib.sites.models import Site
 from models import Order
 from mamona.models import Payment
 
 from decimal import Decimal
 
 class SimpleTest(TestCase):
+	fixtures = ['site']
+
 	def setUp(self):
 		self.o1 = Order.objects.create(name="Order 1", total=Decimal("25.12"))
 		self.o2 = Order.objects.create(name="Order 2", total=Decimal("0.01"))
@@ -50,7 +53,7 @@ class SimpleTest(TestCase):
 		self.assertEqual(response.status_code, 404)
 		# choose success
 		response = self.client.get(
-				reverse('mamona-dummy-on-success', kwargs={'payment_id': p1.id}),
+				reverse('mamona-dummy-do-success', kwargs={'payment_id': p1.id}),
 				follow=True
 				)
 		p1 = Payment.objects.get(id=p1.id)
@@ -68,7 +71,7 @@ class SimpleTest(TestCase):
 		p2 = self.o2.checkout()
 		# this should fail with 404
 		response = self.client.get(
-				reverse('mamona-dummy-on-success', kwargs={'payment_id': p2.id}),
+				reverse('mamona-dummy-do-success', kwargs={'payment_id': p2.id}),
 				follow=True
 				)
 		self.assertEqual(response.status_code, 404)
@@ -78,7 +81,7 @@ class SimpleTest(TestCase):
 				follow=True
 				)
 		response = self.client.get(
-				reverse('mamona-dummy-on-failure', kwargs={'payment_id': p2.id}),
+				reverse('mamona-dummy-do-failure', kwargs={'payment_id': p2.id}),
 				follow=True
 				)
 		p2 = Payment.objects.get(id=p2.id)

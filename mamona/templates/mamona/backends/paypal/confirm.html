@@ -5,12 +5,8 @@
 	<input type="hidden" name="invoice" value="{{ payment.id }}" />
 	{% for item in items %}
 		<input type="hidden" name="item_name_{{ forloop.counter }}" value="{{ item.name }}" />
-		{% if not item.price and forloop.counter == 1 %}
-		<input type="hidden" name="amount_1" value="{{ payment.amount }}" />
-		{% else %}
-		<input type="hidden" name="amount_{{ forloop.counter }}" value="{% if item.price %}{{ item.price }}{% else %}0{% endif %}" />
-		{% endif %}
-		<input type="hidden" name="quantity_{{ forloop.counter }}" value="{% if item.quantity %}{{ item.quantity }}{% else %}1{% endif %}" />
+		<input type="hidden" name="amount_{{ forloop.counter }}" value="{{ item.unit_price }}" />
+		<input type="hidden" name="quantity_{{ forloop.counter }}" value="{{ item.quantity }}" />
 	{% endfor %}
 	{% if customer.first_name %}<input type="hidden" name="first_name" value="{{ customer.first_name }}" />{% endif %}
 	{% if customer.last_name %}<input type="hidden" name="last_name" value="{{ customer.last_name }}" />{% endif %}

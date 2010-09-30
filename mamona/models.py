@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from datetime import datetime
 from abstract_mixin import AbstractMixin
-from exceptions import *
+import signals
 
 PAYMENT_STATUS_CHOICES = (
 		('new', _("New")),
@@ -23,33 +23,62 @@ class PaymentFactory(models.Model, AbstractMixin):
 	class Meta:
 		abstract = True
 
+	def change_status(self, new_status):
+		old_status = self.status
+		self.status = new_status
+		self.save()
+		signals.payment_status_changed.send(
+				sender=self,
+				old_status=old_status, new_status=new_status
+				)
+
 	def on_success(self):
 		"Launched by backend when payment is successfully finished."
-		self.status = 'paid'
 		self.paid_on = datetime.now()
-		self.save()
-		return self.order.on_payment_success()
+		self.change_status('paid')
+		urls = {}
+		signals.return_urls_query.send(sender=self, urls=urls)
+		return urls['success']
 
 	def on_failure(self):
 		"Launched by backend when payment fails."
-		self.status = 'failed'
-		self.save()
-		return self.order.on_payment_failure()
+		self.change_status('failed')
+		urls = {}
+		signals.return_urls_query.send(sender=self, urls=urls)
+		return urls['failure']
 
 	def get_items(self):
-		"""Retrieves item list from order object.
-		The order model must provide method of the same name,
-		which must return at least one item. Each item is expected
-		to be a dictionary, containing at least 'name' element and
-		optionally 'price' element.
+		"""Retrieves item list. Listeners must fill 'items' list with
+		at least one item. Each item is expected to be a dictionary,
+		containing at least 'name' element and optionally 'unit_price' and
+		'quantity' elements. If not present, 'unit_price' and 'quantity'
+		default to 0 and 1 respectively.
+
+		Listener is responsible for providing data consistient with
+		Payment.amount - otherwise the final amount may differ, depending
+		on the backend used.
 		"""
-		# TODO: some sanitization here
-		return self.order.get_items()
+		items = []
+		signals.order_items_query.send(sender=self, items=items)
+		# XXX: sanitization and filling with defaults - do we need it? may be costly.
+		if len(items) == 1 and not items[0].has_key('unit_price'):
+			items[0]['unit_price'] = self.amount
+			return items
+		for item in items:
+			assert item.has_key['name']
+			if not item.has_key('unit_price'):
+				item['unit_price'] = 0
+			if not item.has_key('quantity'):
+				item['quantity'] = 1
+		return items
 
 	def get_customer_data(self):
-		"""Retrieves customer data from order object.
+		"""Retrieves customer data. The default empty dictionary is
+		already the minimal implementation.
 		"""
-		return self.order.get_customer_data()
+		customer = {}
+		signals.customer_data_query.send(sender=self, customer=customer)
+		return customer
 
 	@classmethod
 	def contribute(cls, order, **kwargs):

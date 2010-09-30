@@ -37,14 +37,6 @@ class Order(models.Model):
 	def checkout(self):
 		return self.payments.create(amount=self.total, currency='EUR')
 
-	def on_payment_success(self):
-		self.status = 's'
-		self.save()
-		return reverse('cashier-show-order', kwargs={'order_id': self.id})
-
-	def on_payment_failure(self):
-		self.status = 'f'
-		self.save()
-		return reverse('cashier-show-order', kwargs={'order_id': self.id})
-
 Payment = build_payment_model(Order, unique=False, related_name='payments')
+
+import listeners
