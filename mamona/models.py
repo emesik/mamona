@@ -65,7 +65,7 @@ class PaymentFactory(models.Model, AbstractMixin):
 			items[0]['unit_price'] = self.amount
 			return items
 		for item in items:
-			assert item.has_key['name']
+			assert item.has_key('name')
 			if not item.has_key('unit_price'):
 				item['unit_price'] = 0
 			if not item.has_key('quantity'):
