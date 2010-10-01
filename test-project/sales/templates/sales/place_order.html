@@ -2,6 +2,12 @@
 {% block content %}
 <form method="POST">
 	{{ form.as_p }}
+	<p>
+	Please enter the item names and prices:
+	</p>
+	<table>
+		{{ formset.as_table }}
+	</table>
 	<input type="submit" value="Place order" />
 </form>
 {% endblock %}

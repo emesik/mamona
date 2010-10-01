@@ -78,7 +78,8 @@ INSTALLED_APPS = (
 	'mamona',
 	'mamona.backends.dummy',
 	'mamona.backends.paypal',
-	'cashier',
+	'order',
+	'sales',
 )
 
 MAMONA_ACTIVE_BACKENDS = (

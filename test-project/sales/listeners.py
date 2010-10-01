@@ -5,12 +5,13 @@ from mamona import signals
 def return_urls_query_listener(sender, urls, **kwargs):
 	url = 'http://%s%s' % (
 			Site.objects.get_current().domain,
-			reverse('cashier-show-order', kwargs={'order_id': sender.order.id})
+			reverse('show-order', kwargs={'order_id': sender.order.id})
 			)
 	urls.update({'success': url, 'failure': url})
 
 def order_items_query_listener(sender, items, **kwargs):
-	items.append({'name': sender.order.name})
+	for item in sender.order.item_set.all():
+		items.append({'name': item.name, 'unit_price': item.price})
 
 def payment_status_changed_listener(sender, old_status, new_status, **kwargs):
 	if new_status == 'paid':
