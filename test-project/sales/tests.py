@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
-from models import Order
+from order.models import UnawareOrder
 from mamona.models import Payment
 
 from decimal import Decimal
@@ -10,17 +10,16 @@ class SimpleTest(TestCase):
 	fixtures = ['site']
 
 	def setUp(self):
-		self.o1 = Order.objects.create(name="Order 1", total=Decimal("25.12"))
-		self.o2 = Order.objects.create(name="Order 2", total=Decimal("0.01"))
+		self.o1 = UnawareOrder.objects.create(total=Decimal("25.12"))
+		self.o2 = UnawareOrder.objects.create(total=Decimal("0.01"))
 
 	def test_payment_creation(self):
-		self.o1.checkout()
-		self.o2.checkout()
-		self.o2.checkout()
+		self.o1.payments.create(amount=self.o1.total)
+		self.o2.payments.create(amount=self.o2.total)
 
 	def test_payment_success_and_failure(self):
-		p1 = self.o1.checkout()
-		p2 = self.o2.checkout()
+		p1 = self.o1.payments.create(amount=self.o1.total)
+		p2 = self.o2.payments.create(amount=self.o2.total)
 		p1.on_success()
 		self.assertEqual(p1.status, 'paid')
 		self.assertEqual(self.o1.status, 's')
@@ -29,7 +28,7 @@ class SimpleTest(TestCase):
 		self.assertEqual(self.o2.status, 'f')
 
 	def test_dummy_backend(self):
-		p1 = self.o1.checkout()
+		p1 = self.o1.payments.create(amount=self.o1.total)
 		# request without backend should fail with 404
 		response = self.client.post(
 				reverse('mamona-process-payment', kwargs={'payment_id': p1.id}),
@@ -68,7 +67,7 @@ class SimpleTest(TestCase):
 		# dummy backend should have created it's own model instance
 		self.assertEqual(p1.dummytxn.payment_id, p1.id)
 
-		p2 = self.o2.checkout()
+		p2 = self.o2.payments.create(amount=self.o2.total)
 		# this should fail with 404
 		response = self.client.get(
 				reverse('mamona-dummy-do-success', kwargs={'payment_id': p2.id}),
