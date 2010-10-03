@@ -5,13 +5,28 @@ from order.models import UnawareOrder
 from mamona.models import Payment
 
 from decimal import Decimal
+from random import randint
 
 class SimpleTest(TestCase):
 	fixtures = ['site']
 
 	def setUp(self):
 		self.o1 = UnawareOrder.objects.create(total=Decimal("25.12"))
+		i = 1
+		while i <= randint(1,10):
+			self.o1.item_set.create(
+					name="Item %s" % i,
+					price=Decimal(randint(1,100))/Decimal("100")
+					)
+			i += 1
 		self.o2 = UnawareOrder.objects.create(total=Decimal("0.01"))
+		i = 1
+		while i <= randint(1,10):
+			self.o2.item_set.create(
+					name="Item %s" % i,
+					price=Decimal(randint(1,100))/Decimal("100")
+					)
+			i += 1
 
 	def test_payment_creation(self):
 		self.o1.payments.create(amount=self.o1.total)
@@ -57,6 +72,10 @@ class SimpleTest(TestCase):
 				)
 		p1 = Payment.objects.get(id=p1.id)
 		self.assertEqual(p1.status, 'paid')
+		self.assertEqual(
+				p1.amount,
+				sum(map(lambda i: i.price, self.o1.item_set.all()))
+				)
 		# re-processing should fail
 		response = self.client.post(
 				reverse('mamona-process-payment', kwargs={'payment_id': p1.id}),
@@ -85,3 +104,7 @@ class SimpleTest(TestCase):
 				)
 		p2 = Payment.objects.get(id=p2.id)
 		self.assertEqual(p2.status, 'failed')
+		self.assertEqual(
+				p2.amount,
+				sum(map(lambda i: i.price, self.o2.item_set.all()))
+				)
