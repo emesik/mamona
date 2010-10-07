@@ -19,6 +19,7 @@ class PaymentFactory(models.Model, AbstractMixin):
 	backend = models.CharField(max_length=30)
 	created_on = models.DateTimeField(auto_now_add=True)
 	paid_on = models.DateTimeField(blank=True, null=True, default=None)
+	amount_paid = models.DecimalField(decimal_places=4, max_digits=20, default=0)
 
 	class Meta:
 		abstract = True
@@ -32,9 +33,15 @@ class PaymentFactory(models.Model, AbstractMixin):
 				old_status=old_status, new_status=new_status
 				)
 
-	def on_success(self):
-		"Launched by backend when payment is successfully finished."
+	def on_success(self, amount=None):
+		"""Launched by backend when payment is successfully finished.
+		Can optionally accept received amount (defaults to total payment's amount).
+		"""
 		self.paid_on = datetime.now()
+		if amount:
+			self.amount_paid = amount
+		else:
+			self.amount_paid = self.amount
 		self.change_status('paid')
 		urls = {}
 		signals.return_urls_query.send(sender=self, urls=urls)

@@ -8,6 +8,7 @@ from mamona.utils import get_backend_settings
 
 import urllib2
 from urllib import urlencode
+from decimal import Decimal
 
 def confirm(request, payment_id):
 	payment = get_object_or_404(Payment, id=payment_id, status='in_progress', backend='paypal')
@@ -50,26 +51,21 @@ def ipn(request):
 	for details."""
 	# TODO: add some logging here, as all the errors will occur silently
 	payment = get_object_or_404(Payment, id=request.POST['invoice'], status='in_progress', backend='paypal')
-#	print "%s: %s" % (payment.id, payment)
 	data = list(request.POST.items())
 	data.insert(0, ('cmd', '_notify-validate'))
 	udata = urlencode(data)
 	url = get_backend_settings('paypal')['url']
-#	print url
 	r = urllib2.Request(url)
 	r.add_header("Content-type", "application/x-www-form-urlencoded")
 	h = urllib2.urlopen(r, udata)
 	result = h.read()
-#	print h.code
-#	print repr(result)
 	h.close()
 
 	if result == "VERIFIED":
-#		print "verified"
 		# TODO: save foreign-id from data['txn_id']
-		payment.on_success()
+		amount = Decimal(data['mc_gross'])
+		payment.on_success(amount)
 		return HttpResponse('OKTHXBAI')
 	else:
-#		print "not verified"
 		# XXX: marking the payment as failed would create a security hole
 		return HttpResponseNotFound()
