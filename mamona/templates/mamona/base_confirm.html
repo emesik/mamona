@@ -21,6 +21,10 @@
 </table>
 <p>
 You are about to pay <strong>{{ payment.amount }} {{ payment.currency }}</strong>.
-If you are sure, press the <em>Pay now</em> button below.
+If you are sure, select the payment method and press the <em>Pay now</em> button below.
 </p>
+<form method="POST">
+	{{ form.as_p }}
+	<input type="submit" value="Pay now" />
+</form>
 {% endblock %}
