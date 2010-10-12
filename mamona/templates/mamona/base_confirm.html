@@ -15,7 +15,7 @@
 			<td>{{ forloop.counter }}</td>
 			<td>{{ item.name }}</td>
 			<td>{{ item.quantity }}</td>
-			<td>{{ item.unit_price }}</td>
+			<td>{{ item.unit_price|floatformat:2 }}</td>
 		</tr>
 		{% endfor %}
 </table>
