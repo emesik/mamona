@@ -1,14 +1,15 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% block content %}
 <p>
-You are about to process the following payment via Mamona's dummy module:
+{% trans "You are about to process the following payment via Mamona's dummy module" %}:
 </p>
 <p><strong>{{ payment }}</strong></p>
 <p>
-Would you like to finish this payment with success or failure?
+{% trans "Would you like to finish this payment with success or failure?" %}
 </p>
 <p>
-<a href="{% url mamona-dummy-do-success payment.id %}">Success</a>
-<a href="{% url mamona-dummy-do-failure payment.id %}">Failure</a>
+<a href="{% url mamona-dummy-do-success payment.id %}">{% trans "Success" %}</a>
+<a href="{% url mamona-dummy-do-failure payment.id %}">{% trans "Failure" %}</a>
 </p>
 {% endblock %}

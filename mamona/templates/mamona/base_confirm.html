@@ -4,7 +4,7 @@
 {% include 'mamona/snippets/payment_details.html' %}
 <p>
 {% blocktrans with payment.amount as amount and payment.currency as currency %}
-You are about to pay <strong>{{ amount }} {{ currency }}</strong>.
+You are about to pay <strong>{{ amount|floatformat:2 }} {{ currency }}</strong>.
 If you are sure, press the button below.
 {% endblocktrans %}
 </p>
