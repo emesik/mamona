@@ -21,7 +21,8 @@ Any model as order, really?
 
 Yes, thanks to great `AbstractMixin <http://gist.github.com/584106>`__ we can
 attach *Payment* model to any other model, which represents an order, single item,
-subscription plan, donation... whatever.
+subscription plan, donation... whatever. We're not using generic relations here, but
+good old *ForeignKey* which makes your data consistent on DB level.
 
 There are **no interface requirements** regarding the *order* model (it doesn't need
 to be called *order*, either). The only thing you have to do, is to implement basic
