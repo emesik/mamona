@@ -69,5 +69,5 @@ Finally, build a *Payment* model connected together with your *order* model:
 
     Payment = build_payment_model(MyOrderModel, unique=True, related_name='payments')
 
-To check an example implementation, see ``test-project/cashier`` application. And also
-refer to the source code of Mamona itself.
+To check an example implementation, see ``test-project/``. And also refer to the source
+code of Mamona itself.
