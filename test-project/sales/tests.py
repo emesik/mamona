@@ -44,12 +44,12 @@ class SimpleTest(TestCase):
 
 	def test_dummy_backend(self):
 		p1 = self.o1.payments.create(amount=self.o1.total)
-		# request without backend should fail with 404
+		# request without backend should give us a form
 		response = self.client.post(
 				reverse('mamona-process-payment', kwargs={'payment_id': p1.id}),
 				follow=True
 				)
-		self.assertEqual(response.status_code, 404)
+		self.assertEqual(response.status_code, 200)
 		# this should succeed
 		response = self.client.post(
 				reverse('mamona-process-payment', kwargs={'payment_id': p1.id}),

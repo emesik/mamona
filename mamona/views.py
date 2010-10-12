@@ -16,7 +16,6 @@ def process_payment(request, payment_id):
 		data = None
 	bknd_form = PaymentMethodForm(data=data, payment=payment)
 	if not bknd_form.is_valid():
-		print bknd_form.errors
 		return direct_to_template(
 				request,
 				'mamona/select_payment_method.html',
