@@ -1,0 +1,129 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-10-12 16:44+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Michał Sałaban <michal@salaban.info>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms:  nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%"
+"100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: forms.py:13
+msgid "Payment method"
+msgstr "Metoda płatności"
+
+#: forms.py:34
+msgid "Payment object is not set. Cannot proceed to the gateway."
+msgstr "Brak obiektu płatności. Nie można kontynuować."
+
+#: models.py:9
+msgid "New"
+msgstr "Nowa"
+
+#: models.py:10
+msgid "In progress"
+msgstr "W realizacji"
+
+#: models.py:11
+msgid "Partially paid"
+msgstr "Zapłacona częściowo"
+
+#: models.py:12
+msgid "Paid"
+msgstr "Zapłacona"
+
+#: models.py:13
+msgid "Failed"
+msgstr "Nieudana"
+
+#: backends/dummy/models.py:6
+msgid "A dummy backend for testing purposes"
+msgstr "Moduł testowy"
+
+#: templates/mamona/base_confirm.html:6
+#, python-format
+msgid ""
+"\n"
+"You are about to pay <strong>%(amount)s %(currency)s</strong>.\n"
+"If you are sure, press the button below.\n"
+msgstr ""
+"\n"
+"Za chwilę zapłacisz <strong>%(amount)s %(currency)s</strong>.\n"
+"Jeśli jesteś pewny(a), naciśnij przycisk poniżej.\n"
+
+#: templates/mamona/base_return.html:6
+msgid "Your payment has been successful!"
+msgstr "Twoja płatność udała się!"
+
+#: templates/mamona/base_return.html:9
+msgid "Your payment has failed!"
+msgstr "Twoja płatność nie udała się!"
+
+#: templates/mamona/base_return.html:12
+msgid ""
+"\n"
+"\t\tYour payment was passed to the gateway, but we have not received the "
+"response yet.\n"
+"\t\tPlease be patient. The status of your payment should be updated soon.\n"
+"\t\t"
+msgstr ""
+"\n"
+"\t\tTwoja płatość została przekazana do bramki ale jeszcze nie otrzymaliśmy "
+"potwierdzenia rezultatu.\n"
+"\t\tProsimy o cierpliwość. Status Twojej płatności niebawem pownien zostać "
+"zaktualizowany.\n"
+"\t\t"
+
+#: templates/mamona/select_payment_method.html:7
+msgid "Proceed"
+msgstr "Kontynuuj"
+
+#: templates/mamona/backends/dummy/decide.html:5
+msgid ""
+"You are about to process the following payment via Mamona's dummy module"
+msgstr "Za chwilę wyślesz poniższą płatność do modułu testowego Mamony"
+
+#: templates/mamona/backends/dummy/decide.html:9
+msgid "Would you like to finish this payment with success or failure?"
+msgstr "Chcesz zakończyć tą płatność sukcesem czy niepowodzeniem?"
+
+#: templates/mamona/backends/dummy/decide.html:12
+msgid "Success"
+msgstr "Sukces"
+
+#: templates/mamona/backends/dummy/decide.html:13
+msgid "Failure"
+msgstr "Niepowodzenie"
+
+#: templates/mamona/backends/paypal/confirm.html:26
+msgid "Pay now"
+msgstr "Zapłać"
+
+#: templates/mamona/snippets/payment_details.html:5
+msgid "No."
+msgstr "Lp."
+
+#: templates/mamona/snippets/payment_details.html:6
+msgid "Item"
+msgstr "Artykuł"
+
+#: templates/mamona/snippets/payment_details.html:7
+msgid "Qty"
+msgstr "Ilość"
+
+#: templates/mamona/snippets/payment_details.html:8
+msgid "Unit price"
+msgstr "Cena jednostkowa"
+
+#: templates/mamona/snippets/payment_details.html:21
+msgid "Total"
+msgstr "Razem"
