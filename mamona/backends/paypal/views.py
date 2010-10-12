@@ -64,7 +64,7 @@ def ipn(request):
 	if result == "VERIFIED":
 		# TODO: save foreign-id from data['txn_id']
 		amount = Decimal(data['mc_gross'])
-		payment.on_success(amount)
+		payment.on_payment(amount)
 		return HttpResponse('OKTHXBAI')
 	else:
 		# XXX: marking the payment as failed would create a security hole
