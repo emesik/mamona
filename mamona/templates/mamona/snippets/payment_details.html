@@ -1,0 +1,24 @@
+{% load i18n %}
+<table>
+	<thead>
+		<tr>
+			<th>{% trans "No." %}</th>
+			<th>{% trans "Item" %}</th>
+			<th>{% trans "Qty" %}</th>
+			<th>{% trans "Unit price" %}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for item in payment.get_items %}
+		<tr>
+			<td>{{ forloop.counter }}</td>
+			<td>{{ item.name }}</td>
+			<td>{{ item.quantity }}</td>
+			<td>{{ item.unit_price|floatformat:2 }}</td>
+		</tr>
+		{% endfor %}
+		<tr>
+			<th colspan="3">{% trans "Total" %}:</th>
+			<td>{{ payment.amount|floatformat:2 }}</td>
+		</tr>
+</table>

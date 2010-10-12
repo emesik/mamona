@@ -9,12 +9,21 @@ class UnawareOrder(models.Model):
 	Mamona existence.
 	"""
 	total = models.DecimalField(decimal_places=2, max_digits=8, default=0)
+	currency = models.CharField(max_length=3, default='EUR')
 	status = models.CharField(
 			max_length=1,
 			choices=(('s','s'), ('f','f')),
 			blank=True,
 			default=''
 			)
+
+	def name(self):
+		if self.item_set.count() == 0:
+			return u"Empty order"
+		elif self.item_set.count() == 1:
+			return self.item_set.all()[0].name
+		else:
+			return u"Multiple-item order"
 
 	def recalculate_total(self):
 		total = Decimal('0')

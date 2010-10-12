@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<form method="POST">
+	<p>
+	Please enter the item names and prices:
+	</p>
+	<table>
+		<thead>
+			<tr>
+				<th>No.</th>
+				<th>Name</th>
+				<th>Price</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for form in formset.forms %}
+			<tr>
+				<td>
+					{{ forloop.counter }}
+				</td>
+				<td>
+					{{ form.name.errors }}
+					{{ form.name }}
+				</td>
+				<td>
+					{{ form.price.errors }}
+					{{ form.price }}
+				</td>
+			</tr>
+		{% endfor %}
+		{{ formset.management_form }}
+		</tbody>
+	</table>
+	{% block extra-form-data %}{% endblock %}
+	<input type="submit" value="Place order" />
+</form>
+{% endblock %}

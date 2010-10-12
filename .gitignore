@@ -3,5 +3,5 @@
 *.swp
 *.sh
 *~
-db
+*.db
 local_settings.py

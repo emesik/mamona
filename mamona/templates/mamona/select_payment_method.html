@@ -1,26 +1,9 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% block content %}
-<table>
-	<thead>
-		<tr>
-			<th>No</th>
-			<th>Item</th>
-			<th>Qty</th>
-			<th>Unit price</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for item in payment.get_items %}
-		<tr>
-			<td>{{ forloop.counter }}</td>
-			<td>{{ item.name }}</td>
-			<td>{{ item.quantity }}</td>
-			<td>{{ item.unit_price }}</td>
-		</tr>
-		{% endfor %}
-</table>
+{% include 'mamona/snippets/payment_details.html' %}
 <form method="POST">
 	{{ form.as_p }}
-	<input type="submit" value="Proceed" />
+	<input type="submit" value="{% trans "Proceed" %}" />
 </form>
 {% endblock %}

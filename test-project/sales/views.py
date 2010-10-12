@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseNotAllowed
 from django.core.urlresolvers import reverse
 from django.views.generic.simple import direct_to_template
 from django.shortcuts import get_object_or_404
@@ -8,24 +8,57 @@ from mamona.forms import PaymentMethodForm
 from order.models import UnawareOrder
 from forms import ItemFormSet
 
-def place_order(request):
+import random
+
+def order_1click(request):
+	# approach 1: one-click item purchase with predefined backend
+	order = UnawareOrder.objects.create()
+	order.item_set.create(
+			name=u"Donation for Mamona author",
+			price=random.random() * 8 + 2
+			)
+	return direct_to_template(
+			request,
+			'sales/order_1click.html',
+			{'order': order, 'backend': 'paypal'}
+			)
+
+def order_multiitem(request):
+	# approach 2: an order with no payment method (Mamona will ask)
 	order = UnawareOrder()
 	if request.method == 'POST':
-		form = PaymentMethodForm(data=request.POST)
-		formset = ItemFormSet(data=request.POST)
-		if form.is_valid() and formset.is_valid():
+		formset = ItemFormSet(instance=order, data=request.POST)
+		if formset.is_valid():
 			order.save()
-			for f in formset.forms:
-				f.instance.order = order
-				f.save()
-			payment = order.payments.create(amount=order.total, currency='EUR')
-			next_step = form.proceed_to_gateway(payment)
-			return HttpResponseRedirect(next_step)
+			formset.save()
+			payment = order.payments.create(amount=order.total, currency=order.currency)
+			return HttpResponseRedirect(
+					reverse('mamona-process-payment', kwargs={'payment_id': payment.id})
+					)
 	else:
-		form = PaymentMethodForm()
-		formset = ItemFormSet()
+		formset = ItemFormSet(instance=order)
 	return direct_to_template(
 		request,
-		'sales/place_order.html',
-		{'form': form, 'formset': formset}
+		'sales/order_multiitem.html',
+		{'order': order, 'formset': formset}
+		)
+
+def order_singlescreen(request):
+	# approach 3: single screen (ask for everything)
+	order = UnawareOrder()
+	if request.method == 'POST':
+		payment_form = PaymentMethodForm(data=request.POST)
+		formset = ItemFormSet(instance=order, data=request.POST)
+		if formset.is_valid() and payment_form.is_valid():
+			order.save()
+			formset.save()
+			payment = order.payments.create(amount=order.total, currency=order.currency)
+			return HttpResponseRedirect(payment_form.proceed_to_gateway(payment))
+	else:
+		payment_form = PaymentMethodForm()
+		formset = ItemFormSet(instance=order)
+	return direct_to_template(
+		request,
+		'sales/order_singlescreen.html',
+		{'order': order, 'formset': formset, 'payment_form': payment_form}
 		)

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Welcome to Mamona test app</h1>
+<p>
+Here you can click and feel three approaches to payments which Mamona offers you. The purpose of this
+test is to see how flexible application it is.
+</p>
+
+<h2>Approach 1: One-click payment</h2>
+<p>
+First of all, we demonstrate one click payment via <a href="http://www.paypal.com/">PayPal</a>.
+Using this, you may also support author of Mamona.
+</p>
+<form action="{% url mamona-process-order %}" method="POST">
+	<p>
+	Would you like to make a <strong>{{ order.name }}</strong> for just <strong>{{ order.total }} {{ order.currency }}</strong>?
+	</p>
+	<input type="hidden" name="order_id" value="{{ order.pk }}" />
+	<input type="hidden" name="backend" value="{{ backend }}" />
+	<input type="submit" value="Yes, I will gladly donate to such a decent man!" />
+</form>
+
+<h2>Approach 2: More complex order</h2>
+<p>
+You will be asked to <a href="{% url sales-order-multiitem %}">assemble some multi-item order</a>.
+</p>
+
+<h2>Approach 3: Everything on a single screen</h2>
+<p>
+Mamona can handle many tasks for you. But you may also shift some logic into your application
+and ask customer <a href="{% url sales-order-singlescreen %}">all the questions on a single screen</a>.
+</p>
+
+{% endblock %}

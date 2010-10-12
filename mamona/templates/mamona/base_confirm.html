@@ -1,26 +1,11 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% block content %}
-<table>
-	<thead>
-		<tr>
-			<th>No</th>
-			<th>Item</th>
-			<th>Qty</th>
-			<th>Unit price</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for item in payment.get_items %}
-		<tr>
-			<td>{{ forloop.counter }}</td>
-			<td>{{ item.name }}</td>
-			<td>{{ item.quantity }}</td>
-			<td>{{ item.unit_price|floatformat:2 }}</td>
-		</tr>
-		{% endfor %}
-</table>
+{% include 'mamona/snippets/payment_details.html' %}
 <p>
+{% blocktrans %}
 You are about to pay <strong>{{ payment.amount }} {{ payment.currency }}</strong>.
-If you are sure, press the <em>Pay now</em> button below.
+If you are sure, press the button below.
+{% endblocktrans %}
 </p>
 {% endblock %}
