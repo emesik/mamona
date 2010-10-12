@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+  <object pk="2" model="sites.site">
+    <field type="CharField" name="domain">localhost:8000</field>
+    <field type="CharField" name="name">localhost</field>
+  </object>
+</django-objects>
