@@ -20,6 +20,9 @@ def payment_status_changed_listener(sender, old_status, new_status, **kwargs):
 	elif new_status == 'failed':
 		sender.order.status = 'f'
 		sender.order.save()
+	elif new_status == 'partially_paid':
+		sender.order.status = 'p'
+		sender.order.save()
 
 def order_to_payment_listener(sender, order, payment, **kwargs):
 	payment.order = order

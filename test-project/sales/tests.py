@@ -27,6 +27,14 @@ class SimpleTest(TestCase):
 					price=Decimal(randint(1,100))/Decimal("100")
 					)
 			i += 1
+		self.o3 = UnawareOrder.objects.create(total=Decimal("0.01"))
+		i = 1
+		while i <= randint(1,10):
+			self.o3.item_set.create(
+					name="Item %s" % i,
+					price=Decimal(randint(1,100))/Decimal("100")
+					)
+			i += 1
 
 	def test_payment_creation(self):
 		self.o1.payments.create(amount=self.o1.total)
@@ -35,12 +43,16 @@ class SimpleTest(TestCase):
 	def test_payment_success_and_failure(self):
 		p1 = self.o1.payments.create(amount=self.o1.total)
 		p2 = self.o2.payments.create(amount=self.o2.total)
-		p1.on_success()
+		p3 = self.o3.payments.create(amount=self.o2.total)
+		p1.on_payment()
 		self.assertEqual(p1.status, 'paid')
 		self.assertEqual(self.o1.status, 's')
-		p2.on_failure()
-		self.assertEqual(p2.status, 'failed')
-		self.assertEqual(self.o2.status, 'f')
+		p2.on_payment(p2.amount - Decimal('0.01'))
+		self.assertEqual(p2.status, 'partially_paid')
+		self.assertEqual(self.o2.status, 'p')
+		p3.on_failure()
+		self.assertEqual(p3.status, 'failed')
+		self.assertEqual(self.o3.status, 'f')
 
 	def test_dummy_backend(self):
 		p1 = self.o1.payments.create(amount=self.o1.total)
