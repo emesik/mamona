@@ -92,10 +92,10 @@ MAMONA_ACTIVE_BACKENDS = (
 )
 MAMONA_BACKENDS_SETTINGS = {
 	'paypal': {
-#		'url': 'https://www.paypal.com/cgi-bin/webscr',			# real payments URL
-		'url': 'https://www.sandbox.paypal.com/cgi-bin/webscr',	# test payments URL
+		'url': 'https://www.paypal.com/cgi-bin/webscr',			# real payments URL
+#		'url': 'https://www.sandbox.paypal.com/cgi-bin/webscr',	# test payments URL
 #		'return_url': 'http://www.example.com/success/',		# global override
-		'email': 'your@email.com',
+		'email': 'michal.salaban@gmail.com',
 	},
 }
 
