@@ -12,7 +12,7 @@ class UnawareOrder(models.Model):
 	currency = models.CharField(max_length=3, default='EUR')
 	status = models.CharField(
 			max_length=1,
-			choices=(('s','success'), ('f','failure'), ('p', 'partially paid')),
+			choices=(('s','success'), ('f','failure'), ('p', 'incomplete')),
 			blank=True,
 			default=''
 			)
