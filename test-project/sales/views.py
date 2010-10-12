@@ -10,8 +10,8 @@ from forms import ItemFormSet
 
 import random
 
-def order_1click(request):
-	# approach 1: one-click item purchase with predefined backend
+def order_singleitem(request):
+	# approach 1: single item purchase with predefined backend
 	order = UnawareOrder.objects.create()
 	order.item_set.create(
 			name=u"Donation for Mamona author",
@@ -19,7 +19,7 @@ def order_1click(request):
 			)
 	return direct_to_template(
 			request,
-			'sales/order_1click.html',
+			'sales/order_singleitem.html',
 			{'order': order, 'backend': 'paypal'}
 			)
 
