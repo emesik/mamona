@@ -1,7 +1,9 @@
+from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.views.generic.simple import direct_to_template
 from django.contrib.sites.models import Site
+from django.utils.translation import ugettext as _
 
 from mamona.models import Payment
 from mamona.utils import get_backend_settings
@@ -39,11 +41,19 @@ def confirm(request, payment_id):
 
 def return_from_gw(request, payment_id):
 	payment = get_object_or_404(Payment, id=payment_id)
-	return direct_to_template(
-			request,
-			'mamona/backends/paypal/return.html',
-			{'payment': payment}
-			)
+	urls = {}
+	signals.return_urls_query.send(sender=payment, urls=urls)
+	if payment.status == 'failed':
+		return HttpResponseRedirect(urls['failure'])
+	elif payment.status == 'paid':
+		return HttpResponseRedirect(urls['paid'])
+	elif payment.status == 'partially_paid':
+		try:
+			return HttpResponseRedirect(urls['partially_paid'])
+		except KeyError:
+			return HttpResponseRedirect(urls['paid'])
+	# We shouldn't get here
+	raise Exception, _("Invalid payment status: %s") % payment.get_status_display()
 
 def ipn(request):
 	"""Instant Payment Notification callback.
