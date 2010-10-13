@@ -7,6 +7,7 @@ from django.utils.translation import ugettext as _
 
 from mamona.models import Payment
 from mamona.utils import get_backend_settings
+from mamona.signals import return_urls_query
 
 import urllib2
 from urllib import urlencode
@@ -42,7 +43,7 @@ def confirm(request, payment_id):
 def return_from_gw(request, payment_id):
 	payment = get_object_or_404(Payment, id=payment_id)
 	urls = {}
-	signals.return_urls_query.send(sender=payment, urls=urls)
+	return_urls_query.send(sender=payment, urls=urls)
 	if payment.status == 'failed':
 		return HttpResponseRedirect(urls['failure'])
 	elif payment.status == 'paid':
@@ -52,8 +53,11 @@ def return_from_gw(request, payment_id):
 			return HttpResponseRedirect(urls['partially_paid'])
 		except KeyError:
 			return HttpResponseRedirect(urls['paid'])
-	# We shouldn't get here
-	raise Exception, _("Invalid payment status: %s") % payment.get_status_display()
+	return direct_to_template(
+			request,
+			'mamona/base_return.html',
+			{'payment': payment}
+			)
 
 def ipn(request):
 	"""Instant Payment Notification callback.
