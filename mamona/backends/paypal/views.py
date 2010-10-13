@@ -73,7 +73,7 @@ def ipn(request):
 
 	if result == "VERIFIED":
 		# TODO: save foreign-id from data['txn_id']
-		amount = Decimal(data['mc_gross'])
+		amount = Decimal(request.POST['mc_gross'])
 		payment.on_payment(amount)
 		return HttpResponse('OKTHXBAI')
 	else:
