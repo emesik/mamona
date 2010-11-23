@@ -1,7 +1,8 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.views.generic.simple import direct_to_template
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext as _
 
@@ -59,6 +60,7 @@ def return_from_gw(request, payment_id):
 			{'payment': payment}
 			)
 
+@csrf_exempt
 def ipn(request):
 	"""Instant Payment Notification callback.
 	See https://cms.paypal.com/us/cgi-bin/?&cmd=_render-content&content_ID=developer/e_howto_admin_IPNIntro
