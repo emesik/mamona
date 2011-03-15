@@ -32,7 +32,7 @@ class PaymentFactory(models.Model, AbstractMixin):
 		self.status = new_status
 		self.save()
 		signals.payment_status_changed.send(
-				sender=self,
+				sender=type(self), instance=self,
 				old_status=old_status, new_status=new_status
 				)
 
@@ -52,7 +52,7 @@ class PaymentFactory(models.Model, AbstractMixin):
 		else:
 			self.change_status('partially_paid')
 		urls = {}
-		signals.return_urls_query.send(sender=self, urls=urls)
+		signals.return_urls_query.send(sender=type(self), instance=self, urls=urls)
 		if not fully_paid:
 			try:
 				# Applications do NOT have to define 'partially_paid' URL.
@@ -65,7 +65,7 @@ class PaymentFactory(models.Model, AbstractMixin):
 		"Launched by backend when payment fails."
 		self.change_status('failed')
 		urls = {}
-		signals.return_urls_query.send(sender=self, urls=urls)
+		signals.return_urls_query.send(sender=type(self), instance=self, urls=urls)
 		return urls['failure']
 
 	def get_items(self):
@@ -80,7 +80,7 @@ class PaymentFactory(models.Model, AbstractMixin):
 		differ and lead to unpredictable results, depending on the backend used.
 		"""
 		items = []
-		signals.order_items_query.send(sender=self, items=items)
+		signals.order_items_query.send(sender=type(self), instance=self, items=items)
 		# XXX: sanitization and filling with defaults - do we need it? may be costly.
 		if len(items) == 1 and not items[0].has_key('unit_price'):
 			items[0]['unit_price'] = self.amount
@@ -98,7 +98,7 @@ class PaymentFactory(models.Model, AbstractMixin):
 		already the minimal implementation.
 		"""
 		customer = {}
-		signals.customer_data_query.send(sender=self, customer=customer)
+		signals.customer_data_query.send(sender=type(self), instance=self, customer=customer)
 		return customer
 
 	@classmethod

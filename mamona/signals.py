@@ -30,7 +30,7 @@ first_name, last_name, email, city, postal_code, country_iso
 return_urls_query = Signal(providing_args=['urls'])
 return_urls_query.__doc__ = """
 Sent to ask for URLs to return from payment gateway.
-#	urls:			dict
+	urls:			dict
 Listeners must fill urls with at least two elements: 'paid' and 'failure',
 which represent the URLs to return after paid and failed payment respectively.
 The optional element 'partially_paid' is used to return after payment which
