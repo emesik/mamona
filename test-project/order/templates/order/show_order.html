@@ -10,7 +10,6 @@ Order status is: <strong>{{ order.get_status_display }}</strong>
 		<tr>
 			<th>{% trans "No." %}</th>
 			<th>{% trans "Item" %}</th>
-			<th>{% trans "Qty" %}</th>
 			<th>{% trans "Unit price" %}</th>
 		</tr>
 	</thead>
@@ -19,12 +18,11 @@ Order status is: <strong>{{ order.get_status_display }}</strong>
 		<tr>
 			<td>{{ forloop.counter }}</td>
 			<td>{{ item.name }}</td>
-			<td>{{ item.quantity }}</td>
-			<td>{{ item.unit_price|floatformat:2 }}</td>
+			<td>{{ item.price|floatformat:2 }}</td>
 		</tr>
 		{% endfor %}
 		<tr>
-			<th colspan="3">{% trans "Total" %}:</th>
+			<th colspan="2">{% trans "Total" %}:</th>
 			<td>{{ order.total|floatformat:2 }}</td>
 		</tr>
 </table>

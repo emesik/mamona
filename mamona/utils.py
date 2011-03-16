@@ -26,9 +26,9 @@ def import_backend_modules(submodule=''):
 
 def get_backend_choices():
 	choices = []
-	backends = import_backend_modules('models')
-	for name,models in backends.items():
-		choices.append((name, models.BACKEND_NAME))
+	backends = import_backend_modules()
+	for name, module in backends.items():
+		choices.append((name, module.BACKEND_NAME))
 	return choices
 
 def get_backend_settings(backend):
