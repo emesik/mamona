@@ -46,17 +46,16 @@ def order_multiitem(request):
 def order_singlescreen(request):
 	# approach 3: single screen (ask for everything)
 	order = UnawareOrder()
+	payment_form = PaymentMethodForm(data=request.POST or None)
+	formset = ItemFormSet(instance=order, data=request.POST or None)
 	if request.method == 'POST':
-		payment_form = PaymentMethodForm(data=request.POST)
-		formset = ItemFormSet(instance=order, data=request.POST)
 		if formset.is_valid() and payment_form.is_valid():
 			order.save()
 			formset.save()
 			payment = order.payments.create(amount=order.total, currency=order.currency)
-			return HttpResponseRedirect(payment_form.proceed_to_gateway(payment))
-	else:
-		payment_form = PaymentMethodForm()
-		formset = ItemFormSet(instance=order)
+			payment_form.save(payment)
+			return HttpResponseRedirect(
+					reverse('mamona-confirm-payment', kwargs={'payment_id': payment.id}))
 	return direct_to_template(
 		request,
 		'sales/order_singlescreen.html',

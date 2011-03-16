@@ -14,7 +14,7 @@ class PaymentMethodForm(forms.Form):
 			)
 
 	def __init__(self, *args, **kwargs):
-		self.payment = kwargs.pop('payment')
+		self.payment = kwargs.pop('payment', None)
 		super(PaymentMethodForm, self).__init__(*args, **kwargs)
 
 	def proceed_to_gateway(self, payment=None):
@@ -33,9 +33,11 @@ class PaymentMethodForm(forms.Form):
 			raise ValueError, _("Payment object is not set. Cannot proceed to the gateway.")
 		return payment.get_processor().proceed_to_gateway(payment)
 
-	def save(self):
-		self.payment.backend = self.cleaned_data['backend']
-		self.payment.save()
+	def save(self, payment=None):
+		if not payment:
+			payment = self.payment
+		payment.backend = self.cleaned_data['backend']
+		payment.save()
 
 
 class ConfirmationForm(forms.Form):
