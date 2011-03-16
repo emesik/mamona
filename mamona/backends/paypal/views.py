@@ -16,7 +16,7 @@ from decimal import Decimal
 def return_from_gw(request, payment_id):
 	payment = get_object_or_404(Payment, id=payment_id)
 	urls = {}
-	return_urls_query.send(sender=payment, urls=urls)
+	return_urls_query.send(sender=None, instance=payment, urls=urls)
 	if payment.status == 'failed':
 		return HttpResponseRedirect(urls['failure'])
 	elif payment.status == 'paid':
