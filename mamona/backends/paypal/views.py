@@ -3,7 +3,6 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.views.generic.simple import direct_to_template
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.sites.models import Site
 from django.utils.translation import ugettext as _
 
 from mamona.models import Payment
@@ -13,33 +12,6 @@ from mamona.signals import return_urls_query
 import urllib2
 from urllib import urlencode
 from decimal import Decimal
-
-def confirm(request, payment_id):
-	payment = get_object_or_404(Payment, id=payment_id, status='in_progress', backend='paypal')
-	paypal = get_backend_settings('paypal')
-	try:
-		return_url = paypal['return_url']
-	except KeyError:
-		# TODO: use https when needed
-		return_url = 'http://%s%s' % (
-				Site.objects.get_current().domain,
-				reverse('mamona-paypal-return', kwargs={'payment_id': payment.id})
-				)
-	notify_url = 'http://%s%s' % (
-			Site.objects.get_current().domain,
-			reverse('mamona-paypal-ipn')
-			)
-	items = payment.get_items()
-	customer = payment.get_customer_data()
-	return direct_to_template(
-			request,
-			'mamona/backends/paypal/confirm.html',
-			{
-				'payment': payment, 'items': items, 'customer': customer,
-				'paypal': paypal,
-				'return_url': return_url, 'notify_url': notify_url
-				}
-			)
 
 def return_from_gw(request, payment_id):
 	payment = get_object_or_404(Payment, id=payment_id)
