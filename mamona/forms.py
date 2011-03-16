@@ -13,9 +13,9 @@ class PaymentMethodForm(forms.Form):
 			label=_("Payment method"),
 			)
 
-	def __init__(self, payment=None, *args, **kwargs):
+	def __init__(self, *args, **kwargs):
+		self.payment = kwargs.pop('payment')
 		super(PaymentMethodForm, self).__init__(*args, **kwargs)
-		self.payment = payment
 
 	def proceed_to_gateway(self, payment=None):
 		"""Saves backend information in the payment object, marks it as \"In progress\"
@@ -27,30 +27,19 @@ class PaymentMethodForm(forms.Form):
 		if payment is None:
 			payment = self.payment
 		if payment:
-			payment.status = 'in_progress'
 			payment.backend = self.cleaned_data['backend']
-			payment.save()
+			payment.change_status('in_progress')
 		else:
 			raise ValueError, _("Payment object is not set. Cannot proceed to the gateway.")
-		mamona = __import__('mamona.backends.%s.processor' % payment.backend)
-		return getattr(mamona.backends, payment.backend).processor.proceed_to_gateway(payment)
+		return payment.get_processor().proceed_to_gateway(payment)
+
+	def save(self):
+		self.payment.backend = self.cleaned_data['backend']
+		self.payment.save()
 
 
-#def model_form_with_payment(model_form_class):
-#	"""Returns a form class which inherits from model_form_class given as parameter
-#	and PaymentMethodForm. This is useful when creating ModelForm for your Order model
-#	merged together with payment method selection. If you do it directly, like...
-#
-#		class MyOrderForm(forms.ModelForm, PaymentMethodForm):
-#			pass
-#
-#	...it will fail with metaclass conflict. This function resolves the conflict by
-#	creating an intermediate metaclass.
-#	"""
-#
-#	class NC_Meta(PaymentMethodForm.__metaclass__, model_form_class.__metaclass__):
-#		pass
-#	class OrderWithPaymentForm(PaymentMethodForm, model_form_class):
-#		__metaclass__ = NC_Meta
-#	OrderWithPaymentForm.Meta.fields = model_form_class.Meta.fields + ('backend',)
-#	return OrderWithPaymentForm
+class ConfirmationForm(forms.Form):
+	def __init__(self, *args, **kwargs):
+		self.payment = kwargs.pop('payment')
+		super(forms.Form, self).__init__(*args, **kwargs)
+		self.payment.change_status('in_progress')

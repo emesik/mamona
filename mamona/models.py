@@ -25,6 +25,13 @@ class PaymentFactory(models.Model, AbstractMixin):
 	class Meta:
 		abstract = True
 
+	def get_processor(self):
+		ppath = 'mamona.backends.%s.processor' % self.backend
+		try:
+			return getattr(__import__(ppath).backends, self.backend).processor
+		except None:#ImportError:
+			raise ValueError("Backend '%s' is not available or provides no processor." % self.backend)
+
 	def change_status(self, new_status):
 		"""Always change payment's status via this method. Otherwise the signal
 		will not be emitted."""
@@ -125,6 +132,7 @@ def build_payment_model(order_class, **kwargs):
 	bknd_models_modules = import_backend_modules('models')
 	for bknd_name, models in bknd_models_modules.items():
 		app_cache.register_models(bknd_name, *models.build_models(Payment))
+	return Payment
 
 def payment_from_order(order):
 	"""Builds payment based on given Order instance."""

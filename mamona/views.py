@@ -38,10 +38,18 @@ def process_payment(request, payment_id):
 	else:
 		data = None
 	bknd_form = PaymentMethodForm(data=data, payment=payment)
-	if not bknd_form.is_valid():
-		return direct_to_template(
-				request,
-				'mamona/select_payment_method.html',
-				{'payment': payment, 'form': bknd_form},
-				)
-	return HttpResponseRedirect(bknd_form.proceed_to_gateway())
+	if bknd_form.is_valid():
+		bknd_form.save()
+		return HttpResponseRedirect(
+				reverse('mamona-confirm-payment', kwargs={'payment_id': payment.id}))
+	return direct_to_template(
+			request,
+			'mamona/select_payment_method.html',
+			{'payment': payment, 'form': bknd_form},
+			)
+
+def confirm_payment(request, payment_id):
+	payment = get_object_or_404(Payment, id=payment_id, status='new')
+	formdata = payment.get_processor().get_confirmation_form(payment)
+	return direct_to_template(request, 'mamona/confirm.html',
+			{'formdata': formdata, 'payment': payment})
