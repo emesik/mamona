@@ -1,8 +1,3 @@
-from datetime import datetime
-from django.http import HttpResponseRedirect
-from django.conf import settings
-from django.core.urlresolvers import reverse
-
 from mamona.utils import get_backend_settings
 
 from . import forms
