@@ -1,9 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
-from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.views.generic.simple import direct_to_template
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.translation import ugettext as _
 
 from mamona.models import Payment
 from mamona.utils import get_backend_settings
@@ -38,7 +36,9 @@ def ipn(request):
 	See https://cms.paypal.com/us/cgi-bin/?&cmd=_render-content&content_ID=developer/e_howto_admin_IPNIntro
 	for details."""
 	# TODO: add some logging here, as all the errors will occur silently
-	payment = get_object_or_404(Payment, id=request.POST['invoice'], status='in_progress', backend='paypal')
+	payment = get_object_or_404(Payment, id=request.POST['invoice'],
+			status__in=('in_progress', 'partially_paid', 'paid', 'failed'),
+			backend='paypal')
 	data = list(request.POST.items())
 	data.insert(0, ('cmd', '_notify-validate'))
 	udata = urlencode(data)
@@ -51,8 +51,10 @@ def ipn(request):
 
 	if result == "VERIFIED":
 		# TODO: save foreign-id from data['txn_id']
-		amount = Decimal(request.POST['mc_gross'])
-		payment.on_payment(amount)
+		if payment.status == 'in_progress':
+			amount = Decimal(request.POST['mc_gross'])
+			# TODO: handle different IPN calls, e.g. refunds
+			payment.on_payment(amount)
 		return HttpResponse('OKTHXBAI')
 	else:
 		# XXX: marking the payment as failed would create a security hole
