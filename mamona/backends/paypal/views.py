@@ -1,6 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
-from django.shortcuts import get_object_or_404
-from django.views.generic.simple import direct_to_template
+from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 
 from mamona.models import Payment
@@ -24,7 +23,7 @@ def return_from_gw(request, payment_id):
 			return HttpResponseRedirect(urls['partially_paid'])
 		except KeyError:
 			return HttpResponseRedirect(urls['paid'])
-	return direct_to_template(
+	return render(
 			request,
 			'mamona/base_return.html',
 			{'payment': payment}
