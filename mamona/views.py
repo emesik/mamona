@@ -1,8 +1,7 @@
 from django.conf import settings
 from django.http import HttpResponseNotFound, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.shortcuts import get_object_or_404
-from django.views.generic.simple import direct_to_template
+from django.shortcuts import get_object_or_404, render
 
 from models import Payment, Order, payment_from_order
 from forms import PaymentMethodForm
@@ -42,7 +41,7 @@ def process_payment(request, payment_id):
 		bknd_form.save()
 		return HttpResponseRedirect(
 				reverse('mamona-confirm-payment', kwargs={'payment_id': payment.id}))
-	return direct_to_template(
+	return render(
 			request,
 			'mamona/select_payment_method.html',
 			{'payment': payment, 'form': bknd_form},
@@ -51,5 +50,5 @@ def process_payment(request, payment_id):
 def confirm_payment(request, payment_id):
 	payment = get_object_or_404(Payment, id=payment_id, status='new')
 	formdata = payment.get_processor().get_confirmation_form(payment)
-	return direct_to_template(request, 'mamona/confirm.html',
+	return render(request, 'mamona/confirm.html',
 			{'formdata': formdata, 'payment': payment})

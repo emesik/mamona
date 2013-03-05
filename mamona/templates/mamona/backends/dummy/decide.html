@@ -9,7 +9,7 @@
 {% trans "Would you like to finish this payment with success or failure?" %}
 </p>
 <p>
-<a href="{% url mamona-dummy-do-success payment.id %}">{% trans "Success" %}</a>
-<a href="{% url mamona-dummy-do-failure payment.id %}">{% trans "Failure" %}</a>
+<a href="{% url 'mamona-dummy-do-success' payment.id %}">{% trans "Success" %}</a>
+<a href="{% url 'mamona-dummy-do-failure' payment.id %}">{% trans "Failure" %}</a>
 </p>
 {% endblock %}
