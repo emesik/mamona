@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 
@@ -35,11 +35,21 @@ def ipn(request):
 	See https://cms.paypal.com/us/cgi-bin/?&cmd=_render-content&content_ID=developer/e_howto_admin_IPNIntro
 	for details."""
 	# TODO: add some logging here, as all the errors will occur silently
-	payment = get_object_or_404(Payment, id=request.POST['invoice'],
-			status__in=('in_progress', 'partially_paid', 'paid', 'failed'),
-			backend='paypal')
-	data = list(request.POST.items())
-	data.insert(0, ('cmd', '_notify-validate'))
+	try:
+		payment = get_object_or_404(Payment, id=request.POST['invoice'],
+				status__in=('in_progress', 'partially_paid', 'paid', 'failed'),
+				backend='paypal')
+	except (KeyError, ValueError):
+		return HttpResponseBadRequest()
+	charset = request.POST.get('charset', 'UTF-8')
+	request.encoding = charset
+	data = request.POST.dict()
+	data['cmd'] = '_notify-validate'
+
+	# Encode data as PayPal wants it.
+	for k, v in data.items():
+		data[k] = v.encode(charset)
+
 	udata = urlencode(data)
 	url = get_backend_settings('paypal')['url']
 	r = urllib2.Request(url)
