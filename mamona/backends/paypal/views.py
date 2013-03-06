@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 
@@ -35,6 +35,8 @@ def ipn(request):
 	See https://cms.paypal.com/us/cgi-bin/?&cmd=_render-content&content_ID=developer/e_howto_admin_IPNIntro
 	for details."""
 	# TODO: add some logging here, as all the errors will occur silently
+	if not 'invoice' in request.POST:
+		return HttpResponseBadRequest()
 	payment = get_object_or_404(Payment, id=request.POST['invoice'],
 			status__in=('in_progress', 'partially_paid', 'paid', 'failed'),
 			backend='paypal')
