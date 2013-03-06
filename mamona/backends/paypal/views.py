@@ -35,11 +35,13 @@ def ipn(request):
 	See https://cms.paypal.com/us/cgi-bin/?&cmd=_render-content&content_ID=developer/e_howto_admin_IPNIntro
 	for details."""
 	# TODO: add some logging here, as all the errors will occur silently
-	if not 'invoice' in request.POST:
+	try:
+		payment = get_object_or_404(Payment, id=request.POST['invoice'],
+				status__in=('in_progress', 'partially_paid', 'paid', 'failed'),
+				backend='paypal')
+	except (KeyError, ValueError):
 		return HttpResponseBadRequest()
-	payment = get_object_or_404(Payment, id=request.POST['invoice'],
-			status__in=('in_progress', 'partially_paid', 'paid', 'failed'),
-			backend='paypal')
+	
 	data = list(request.POST.items())
 	data.insert(0, ('cmd', '_notify-validate'))
 	udata = urlencode(data)
