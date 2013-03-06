@@ -7,7 +7,7 @@ from mamona.utils import get_backend_settings
 from mamona.signals import return_urls_query
 
 import urllib2
-from django.utils.http import urlencode
+from urllib import urlencode
 from decimal import Decimal
 
 def return_from_gw(request, payment_id):
@@ -41,9 +41,15 @@ def ipn(request):
 				backend='paypal')
 	except (KeyError, ValueError):
 		return HttpResponseBadRequest()
-	
-	data = list(request.POST.items())
-	data.insert(0, ('cmd', '_notify-validate'))
+	charset = request.POST.get('charset', 'UTF-8')
+	request.encoding = charset
+	data = request.POST.dict()
+	data['cmd'] = '_notify-validate'
+
+	# Encode data as PayPal wants it.
+	for k, v in data.items():
+		data[k] = v.encode(charset)
+
 	udata = urlencode(data)
 	url = get_backend_settings('paypal')['url']
 	r = urllib2.Request(url)
