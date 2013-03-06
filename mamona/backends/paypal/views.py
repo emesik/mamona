@@ -7,7 +7,7 @@ from mamona.utils import get_backend_settings
 from mamona.signals import return_urls_query
 
 import urllib2
-from urllib import urlencode
+from django.utils.http import urlencode
 from decimal import Decimal
 
 def return_from_gw(request, payment_id):
